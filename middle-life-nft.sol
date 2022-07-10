@@ -45,16 +45,7 @@ contract MidLife is ERC721A, Ownable {
 
         balances[msg.sender] = senderBalance + tokenQuantity;
 
-        _mintML(tokenQuantity);
-    }
-
-    function _mintML(uint256 tokenQuantity) internal {
-        for (uint256 i = 0; i < tokenQuantity; i++) {
-            uint256 mintIndex = totalSupply();
-            if (totalSupply() < MAX_SUPPLY) {
-                _safeMint(msg.sender, mintIndex);
-            }
-        }
+        _safeMint(msg.sender, tokenQuantity);
     }
 
     function tokenURI(uint256 tokenId)
