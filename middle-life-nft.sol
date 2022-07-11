@@ -24,7 +24,8 @@ contract MidLife is ERC721A, Ownable {
     bytes32 public merkleRoot = 0xabf0ea6f02025cc1b8d7556e47ebadb30ce1cb70560e650c8d09c0133700b983;
 
     mapping(uint256 => string) private _tokenURIs;
-    mapping(address => uint) public balances;
+
+    event Minted(address minter, uint256 amount);
 
     constructor(string memory initBaseURI, string memory initNotRevealedUri)
         ERC721A("Middle Life", "ML")
@@ -34,18 +35,19 @@ contract MidLife is ERC721A, Ownable {
     }
 
     function mintML(uint256 tokenQuantity, bytes32[] calldata _merkleProof) public payable {
-        bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
-        uint senderBalance = balances[msg.sender];
-
-        require(MerkleProof.verify(_merkleProof, merkleRoot, leaf), "Invalid Proof");
-        require(totalSupply() + tokenQuantity <= MAX_SUPPLY, "Sale would exceed max supply");
         require(_isSaleActive, "Sale must be active to mint Middle Life");
-        require(tokenQuantity * mintPrice <= msg.value, "Not enough ether sent");
-        require(senderBalance + tokenQuantity <= maxMint, "Can only mint 2 nft per wallet");
+        require(totalSupply() + tokenQuantity <= MAX_SUPPLY, "Sale would exceed max supply");
 
+        bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
+        require(MerkleProof.verify(_merkleProof, merkleRoot, leaf), "Invalid Proof");
+
+        require(_numberMinted(msg.sender) + tokenQuantity <= maxMint, "Can only mint 2 nft per wallet");
+
+        require(tokenQuantity * mintPrice <= msg.value, "Not enough ether sent");
         balances[msg.sender] = senderBalance + tokenQuantity;
 
         _safeMint(msg.sender, tokenQuantity);
+        emit Minted(msg.sender, tokenQuantity);
     }
 
     function tokenURI(uint256 tokenId)
