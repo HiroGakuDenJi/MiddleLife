@@ -55,7 +55,7 @@ contract MidLife is ERC721A, Ownable {
     }
 
     function tokenURI(uint256 tokenId)
-        external
+        public
         view
         virtual
         override
@@ -93,22 +93,22 @@ contract MidLife is ERC721A, Ownable {
     //only owner
     function flipSaleActive() external onlyOwner {
         saleActived = !saleActived;
-        SetFlipSaleActive(saleActived);
+        emit SetFlipSaleActive(saleActived);
     }
 
     function flipReveal() external onlyOwner {
         revealed = !revealed;
-        SetRevealed(revealed);
+        emit SetRevealed(revealed);
     }
 
     function setMintPrice(uint256 _mintPrice) external onlyOwner {
         mintPrice = _mintPrice;
-        SetMintPriced(mintPrice);
+        emit SetMintPriced(mintPrice);
     }
 
     function setNotRevealedURI(string memory _notRevealedURI) public onlyOwner {
         notRevealedUri = _notRevealedURI;
-        SetNotRevealedURIed(notRevealedUri);
+        emit SetNotRevealedURIed(notRevealedUri);
     }
 
     function setBaseURI(string memory _newBaseURI) public onlyOwner {
@@ -120,12 +120,12 @@ contract MidLife is ERC721A, Ownable {
         onlyOwner
     {
         baseExtension = _newBaseExtension;
-        SetBaseExtensioned(baseExtension);
+        emit SetBaseExtensioned(baseExtension);
     }
 
     function setMaxMint(uint256 _maxMint) external onlyOwner {
         maxMint = _maxMint;
-        SetMaxMint(maxMint);
+        emit SetMaxMint(maxMint);
     }
 
     function withdraw(address payable to) external onlyOwner {
